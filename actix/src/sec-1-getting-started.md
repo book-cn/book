@@ -1,31 +1,31 @@
 # 入门
 
-Let’s create and run our first actix application. We’ll create a new Cargo project
-that depends on actix and then run the application.
+让我们来创建并运行第一个 actix 应用程序。我们会创建一个新的依赖于 actix 的 Cargo
+项目，然后运行该应用程序。
 
-In previous section we already installed required rust version. Now let's create new cargo projects.
+在上一节中，我们已经安装了所需的 rust 版本。现在来创建新的 cargo 项目。
 
 ## Ping actor
 
-Let’s write our first actix application! Start by creating a new binary-based
-Cargo project and changing into the new directory:
+我们来写第一个 actix 应用程序吧！首先创建一个新的基于二进制的
+Cargo 项目并切换到新目录中：
 
 ```bash
 cargo new actor-ping --bin
 cd actor-ping
 ```
 
-Now, add actix as a dependency of your project by ensuring your Cargo.toml
-contains the following:
+现在，将 actix 添加为项目的依赖，即确保 Cargo.toml
+中包含以下内容：
 
 ```toml
 [dependencies]
 actix = "0.7"
 ```
 
-Let's create an actor that will accept a `Ping` message and respond with the number of pings processed.
+我们来创建一个接受 `Ping` 消息并以处理 ping 的次数作为响应的 actor。
 
-An actor is a type that implements the `Actor` trait:
+actor 是实现 `Actor` trait 的类型：
 
 ```rust
 # extern crate actix;
@@ -42,11 +42,11 @@ impl Actor for MyActor {
 # fn main() {}
 ```
 
-Each actor has an execution context, for `MyActor` we are going to use `Context<A>`. More information
-on actor contexts is available in the next section.
+每个 actor 都有一个执行上下文，对于 `MyActor` 我们会使用 `Context<A>`。关于
+actor 上下文的更多信息在下一节中介绍。
 
-Now we need to define the `Message` that the actor needs to accept. The message can be any type
-that implements the `Message` trait.
+现在需要定义 actor 需要接受的消息（`Message`）。消息可以是实现
+`Message` trait 的任何类型。
 
 ```rust
 # extern crate actix;
@@ -61,12 +61,12 @@ impl Message for Ping {
 # fn main() {}
 ```
 
-The main purpose of the `Message` trait is to define a result type. The `Ping` message defines
-`usize`, which indicates that any actor that can accept a `Ping` message needs to
-return `usize` value.
+`Message` trait 的主要目的是定义结果类型。`Ping` 消息定义了
+`usize`，表示任何可以接受 `Ping` 消息的 actor 都需要<!--
+-->返回 `usize` 值。
 
-And finally, we need to declare that our actor `MyActor` can accept `Ping` and handle it.
-To do this, the actor needs to implement the `Handler<Ping>` trait.
+最后，需要声明我们的 actor `MyActor` 可以接受 `Ping` 并处理它。
+为此，actor 需要实现 `Handler<Ping>` trait。
 
 ```rust
 # extern crate actix;
@@ -98,18 +98,18 @@ impl Handler<Ping> for MyActor {
 # fn main() {}
 ```
 
-That's it. Now we just need to start our actor and send a message to it.
-The start procedure depends on the actor's context implementation. In our case can we use
-`Context<A>` which is tokio/future based. We can start it with `Actor::start()`
-or `Actor::create()`. The first is used when the actor instance can be created immediately.
-The second method is used in case we need access to the context object before we can create
-the actor instance. In case of the `MyActor` actor we can use `start()`.
+就是这样。现在只需要启动我们的 actor 并向其发送消息。
+启动过程取决于 actor 的上下文实现。在本例中我们可以使用<!--
+-->基于 tokio/future 的 `Context<A>`。可以用 `Actor::start()`
+或者 `Actor::create()` 来启动。前者用于可以立即创建 actor 实例的场景。
+后者用于在创建 actor 实例之前需要访问上下文对象的场景<!--
+-->。对于 `MyActor` actor，我们可以使用 `start()`。
 
-All communication with actors goes through an address. You can `do_send` a message
-without waiting for a response, or `send` to an actor with a specific message.
-Both `start()` and `create()` return an address object.
+所有与 actor 的通信都通过地址。可以用 `do_send` 发送一条消息
+而不等待响应，也可以向一个 actor 用 `send` 发送指定消息。
+`start()` 与 `create()` 都会返回一个地址对象。
 
-In the following example we are going to create a `MyActor` actor and send one message.
+在以下示例中，我们会创建一个 `MyActor` actor 并发送一条消息。
 
 ```rust
 # extern crate actix;
@@ -140,10 +140,10 @@ In the following example we are going to create a `MyActor` actor and send one m
 fn main() {
     let system = System::new("test");
 
-    // start new actor
+    // 启动新的 actor
     let addr = MyActor{count: 10}.start();
 
-    // send message and get future for result
+    // 发送消息并获取结果 future
     let res = addr.send(Ping(10));
 
     Arbiter::spawn(
@@ -157,4 +157,4 @@ fn main() {
 }
 ```
 
-The Ping example is available in the [examples directory](https://github.com/actix/actix/tree/master/examples/).
+Ping 示例可在[示例目录](https://github.com/actix/actix/tree/master/examples/)中找到。
