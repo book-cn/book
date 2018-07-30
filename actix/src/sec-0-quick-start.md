@@ -1,33 +1,33 @@
 # 快速开始
 
-Before you can start writing an actix application, you’ll need a version of Rust installed.
-We recommend you use rustup to install or configure such a version.
+在开始编写 actix 应用程序之前需要先安装某一版本的 Rust。
+建议使用 rustup 来安装或配置版本。
 
-## Install Rust
+## 安装 Rust
 
-Before we begin, we need to install Rust using the [rustup](https://www.rustup.rs/) installer:
+在开始之前，我们需要使用 [rustup](https://www.rustup.rs/) 安装程序来安装 Rust：
 
 ```bash
 curl https://sh.rustup.rs -sSf | sh
 ```
 
-If you already have rustup installed, run this command to ensure you have the latest version of Rust:
+如果已经安装过 rustup，请运行这个命令来确保拥有最新版本的 Rust：
 
 ```bash
 rustup update
 ```
 
-The actix framework requires rust version 1.21 and up.
+actix 框架需要 Rust 1.21 及更高版本。
 
-## Running Examples
+## 运行示例
 
-The fastest way to start experimenting with actix is to clone the actix repository
-and run the included examples in the examples/ directory. The following set of
-commands runs the `ping` example:
+开始试验 actix 最快的方法是克隆 actix 版本库<!--
+-->并运行 examples/ 目录中所包含的示例。以下这组<!--
+-->命令会运行 `ping` 示例：
 
 ```bash
 git clone https://github.com/actix/actix
 cargo run --example ping
 ```
 
-Check [examples/](https://github.com/actix/actix/tree/master/examples) directory for more examples.
+更多示例请查看 [examples/](https://github.com/actix/actix/tree/master/examples) 目录。
