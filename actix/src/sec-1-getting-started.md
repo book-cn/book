@@ -23,7 +23,7 @@ cd actor-ping
 actix = "0.7"
 ```
 
-我们来创建一个接受 `Ping` 消息并以处理 ping 的次数作为响应的 actor。
+我们来创建一个接受 `Ping` 消息并以 ping 处理后的数字作为响应的 actor。
 
 actor 是实现 `Actor` trait 的类型：
 
