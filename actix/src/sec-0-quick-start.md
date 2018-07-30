@@ -1,4 +1,4 @@
-# Quick start
+# 快速开始
 
 Before you can start writing an actix application, you’ll need a version of Rust installed.
 We recommend you use rustup to install or configure such a version.

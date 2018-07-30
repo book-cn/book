@@ -1,4 +1,4 @@
-# Getting Started
+# 入门
 
 Let’s create and run our first actix application. We’ll create a new Cargo project
 that depends on actix and then run the application.

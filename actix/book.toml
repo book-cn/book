@@ -1,7 +1,7 @@
 [book]
-title = "Actix"
-description = "Actix - actor framework in Rust"
-author = "Actix Project and Contributors"
+title = "Actix 用户指南中文版"
+description = "Actix——Rust 语言的 actor 框架"
+author = "Actix 项目及贡献者（著）& 灰蓝天际（译）"
 
 [output.html]
-google-analytics = "UA-110322332-1"
+google-analytics = "UA-123031709-1"
