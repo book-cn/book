@@ -105,8 +105,8 @@ impl Handler<Ping> for MyActor {
 后者用于在创建 actor 实例之前需要访问上下文对象的场景<!--
 -->。对于 `MyActor` actor，我们可以使用 `start()`。
 
-所有与 actor 的通信都通过地址。可以用 `do_send` 发送一条消息
-而不等待响应，也可以向一个 actor 用 `send` 发送指定消息。
+所有与 actor 的通信都通过地址。可以用 `do_send` 发送一条消息<!--
+-->而不等待响应，也可以向一个 actor 用 `send` 发送指定消息。
 `start()` 与 `create()` 都会返回一个地址对象。
 
 在以下示例中，我们会创建一个 `MyActor` actor 并发送一条消息。
