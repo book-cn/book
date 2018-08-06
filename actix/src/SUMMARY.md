@@ -2,7 +2,7 @@
 
 [Actix 快速入门](./sec-0-quick-start.md)
 - [入门](./sec-1-getting-started.md)
-- [Actor](./sec-2-actor.md)
+- [参与者](./sec-2-actor.md)
 - [地址](./sec-3-address.md)
 - [上下文](./sec-4-context.md)
 - [Arbiter](./sec-5-arbiter.md)

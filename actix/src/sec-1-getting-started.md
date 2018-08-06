@@ -5,7 +5,7 @@
 
 在上一节中，我们已经安装了所需的 rust 版本。现在来创建新的 cargo 项目。
 
-## Ping actor
+## Ping 参与者
 
 我们来写第一个 actix 应用程序吧！首先创建一个新的基于二进制的
 Cargo 项目并切换到新目录中：
@@ -23,9 +23,9 @@ cd actor-ping
 actix = "0.7"
 ```
 
-我们来创建一个接受 `Ping` 消息并以 ping 处理后的数字作为响应的 actor。
+我们来创建一个接受 `Ping` 消息并以 ping 处理后的数字作为响应的参与者。
 
-actor 是实现 `Actor` trait 的类型：
+参与者（actor）是实现 `Actor` trait 的类型：
 
 ```rust
 # extern crate actix;
@@ -42,10 +42,10 @@ impl Actor for MyActor {
 # fn main() {}
 ```
 
-每个 actor 都有一个执行上下文，对于 `MyActor` 我们会使用 `Context<A>`。关于
-actor 上下文的更多信息在下一节中介绍。
+每个参与者都有一个执行上下文，对于 `MyActor` 我们会使用 `Context<A>`。关于<!--
+-->参与者上下文的更多信息在下一节中介绍。
 
-现在需要定义 actor 需要接受的消息（`Message`）。消息可以是实现
+现在需要定义参与者需要接受的消息（`Message`）。消息可以是实现
 `Message` trait 的任何类型。
 
 ```rust
@@ -62,11 +62,11 @@ impl Message for Ping {
 ```
 
 `Message` trait 的主要目的是定义结果类型。`Ping` 消息定义了
-`usize`，表示任何可以接受 `Ping` 消息的 actor 都需要<!--
+`usize`，表示任何可以接受 `Ping` 消息的参与者都需要<!--
 -->返回 `usize` 值。
 
-最后，需要声明我们的 actor `MyActor` 可以接受 `Ping` 并处理它。
-为此，actor 需要实现 `Handler<Ping>` trait。
+最后，需要声明我们的参与者 `MyActor` 可以接受 `Ping` 并处理它。
+为此，该参与者需要实现 `Handler<Ping>` trait。
 
 ```rust
 # extern crate actix;
@@ -98,18 +98,18 @@ impl Handler<Ping> for MyActor {
 # fn main() {}
 ```
 
-就是这样。现在只需要启动我们的 actor 并向其发送消息。
-启动过程取决于 actor 的上下文实现。在本例中我们可以使用<!--
+就是这样。现在只需要启动我们的参与者并向其发送消息。
+启动过程取决于参与者的上下文实现。在本例中我们可以使用<!--
 -->基于 tokio/future 的 `Context<A>`。可以用 `Actor::start()`
-或者 `Actor::create()` 来启动。前者用于可以立即创建 actor 实例的场景。
-后者用于在创建 actor 实例之前需要访问上下文对象的场景<!--
--->。对于 `MyActor` actor，我们可以使用 `start()`。
+或者 `Actor::create()` 来启动。前者用于可以立即创建参与者实例的场景。
+后者用于在创建参与者实例之前需要访问上下文对象的场景<!--
+-->。对于 `MyActor` 参与者，我们可以使用 `start()`。
 
-所有与 actor 的通信都通过地址。可以用 `do_send` 发送一条消息<!--
--->而不等待响应，也可以向一个 actor 用 `send` 发送指定消息。
+所有与参与者的通信都通过地址进行。可以用 `do_send` 发送一条消息<!--
+-->而不等待响应，也可以向一个参与者用 `send` 发送指定消息。
 `start()` 与 `create()` 都会返回一个地址对象。
 
-在以下示例中，我们会创建一个 `MyActor` actor 并发送一条消息。
+在以下示例中，我们会创建一个 `MyActor` 参与者并发送一条消息。
 
 ```rust
 # extern crate actix;
@@ -140,7 +140,7 @@ impl Handler<Ping> for MyActor {
 fn main() {
     let system = System::new("test");
 
-    // 启动新的 actor
+    // 启动新的参与者
     let addr = MyActor{count: 10}.start();
 
     // 发送消息并获取结果 future

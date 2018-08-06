@@ -1,74 +1,74 @@
-# Actor
+# 参与者
 
-Actix is a rust library providing a framework for developing concurrent applications.
+Actix 是一个 rust 库，为开发并发应用程序提供了框架。
 
-Actix is built on the [Actor Model](https://en.wikipedia.org/wiki/Actor_model) which
-allows applications to be written as a group of independently executing but cooperating
-"Actors" which communicate via messages. Actors are objects which encapsulate
-state and behavior and run within the *Actor System* provided by the actix library.
+Actix 建立在[参与者模型（Actor model）](https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F)之上，它<!--
+-->使应用程序可以编写为一组独立执行而又相互协作的
+“参与者”，这些参与者通过消息进行通信。参与者是封装<!--
+-->状态与行为并且会在由 actix 库提供的 *Actor System* 中运行的对象。
 
-Actors run within a specific execution context [*Context<A>*](../actix/struct.Context.html).
-The context object is available only during execution. Each actor has a separate
-execution context. The execution context also controls the lifecycle of an actor.
+参与者在指定的上下文 [*Context<A>*](../actix/struct.Context.html) 中运行。
+该上下文对象只在执行期间可用。每个参与者都有一个独立的<!--
+-->执行上下文。该执行上下文还控制参与者的生命周期。
 
-Actors communicate exclusively by exchanging messages. The sending actor can
-optionally wait for the response. Actors are not referenced directly, but by means
-of addresses.
+参与者仅通过交换信息进行通信。发送方参与者可以<!--
+-->选择等待该响应。不能直接引用参与者，而要通过<!--
+-->地址来引用。
 
-Any rust type can be an actor, it only needs to implement the [*Actor*](../actix/trait.Actor.html) trait.
+任何 rust 类型都可以是一个参与者，只需实现 [*Actor*](../actix/trait.Actor.html) trait 即可。
 
-To be able to handle a specific message the actor has to provide a
-[*Handler<M>*](../actix/trait.Handler.html) implementation for this message. All messages
-are statically typed. The message can be handled in an asynchronous fashion.
-Actor can spawn other actors or add futures or streams to execution context.
-The `Actor` trait provides several methods that allow controlling the actor's lifecycle.
-
-
-## Actor lifecycle
-
-### Started
-
-An actor always starts in the `Started` state. During this state the actor's `started()`
-method is called. The `Actor` trait provides a default implementation for this method.
-The actor context is available during this state and the actor can start more actors or register
-async streams or do any other required configuration.
-
-### Running
-
-After an Actor's `started()` method is called, the actor transitions to the `Running` state.
-The Actor can stay in `running` state indefinitely.
-
-### Stopping
-
-The Actor's execution state changes to the `stopping` state in the following situations:
-
-* `Context::stop` is called by the actor itself
-* all addresses to the actor get dropped. i.e. no other actor references it.
-* no event objects are registered in the context.
-
-An actor can restore from the `stopping` state to the `running` state by creating a new
-address or adding an event object, and by returning `Running::Continue`.
-
-If an actor changed state to `stopping` because `Context::stop()` is called
-then the context immediately stops processing incoming messages and calls
-`Actor::stopping()`. If the actor does not restore back to the `running` state, all
-unprocessed messages are dropped.
-
-By default this method returns `Running::Stop` which confirms the stop operation.
-
-### Stopped
-
-If the actor does not modify the execution context during the stopping state, the actor state changes
-to `Stopped`. This state is considered final and at this point the actor is dropped.
+为了能够处理指定消息，参与者必须提供<!--
+-->这种消息的 [*Handler<M>*](../actix/trait.Handler.html) 实现。所有消息<!--
+-->都是静态类型的。可以使用异步方式处理消息。
+参与者可以产生其他参与者或者将 future 或 stream 添加到执行上下文。
+`Actor` trait 提供了几种可以控制参与者生命周期的方法。
 
 
-## Message
+## 参与者生命周期
 
-An Actor communicates with other actors by sending messages. In actix all
-messages are typed. A message can be any rust type which implements the
-[Message](../actix/trait.Message.html) trait. *Message::Result* defines the return type.
-Let's define a simple `Ping` message - an actor which will accept this message needs to return
-`io::Result<bool>`.
+### 已启动（Started）
+
+参与者总是以 `Started` 状态启动。在这一状态期间调用了该参与者的 `started()`
+方法。`Actor` trait 为这个方法提供了默认实现。
+在这一状态期间可以使用参与者上下文，并且该参与者可以启动更多参与者或者注册<!--
+-->异步流或者做任何其他所需的配置操作。
+
+### 运行中（Running）
+
+调用参与者的 `started()` 方法后，该参与者会转换为 `Running` 状态。
+参与者可以无限期地处于 `running` 状态。
+
+### 停止中（Stopping）
+
+在以下情况下，参与者的执行状态会变更为 `stopping` 状态：
+
+* 该参与者自身调用了 `Context::stop`
+* 该参与者的所有地址都已删除。即没有其他参与者引用它。
+* 在上下文中没有注册事件对象。
+
+一个参与者可以由 `stopping` 状态恢复为 `running` 状态，通过创建一个新的<!--
+-->地址或者添加事件对象，以及通过返回 `Running::Continue` 实现。
+
+如果一个参与者状态变更为 `stopping` 是因为调用了 `Context::stop()`，
+那么该上下文会立即停止处理接入的消息，并调用
+`Actor::stopping()`。如果参与者没有恢复到 `running` 状态，那么<!--
+-->删除所有未处理的消息。
+
+默认这个方法返回 `Running::Stop`，确认停止操作。
+
+### 已停止（Stopped）
+
+如果参与者在停止中状态期间没有修改执行上下文，那么参与者状态会变更<!--
+-->为 `Stopped`。这个状态被认为是最终状态，此时该参与者会被 drop。
+
+
+## 消息
+
+一个 Actor 通过发送消息与其他参与者通信。在 actix 中的所有<!--
+-->消息都是类型化的。消息可以是任何实现了
+[Message](../actix/trait.Message.html) trait 的 rust 类型。*Message::Result* 定义了其返回值类型。
+让我们来定义一个简单的 `Ping` 消息——接受这种消息的参与者需要返回
+`io::Result<bool>`。
 
 ```rust
 # extern crate actix;
@@ -84,14 +84,14 @@ impl Message for Ping {
 # fn main() {}
 ```
 
-## Spawning an actor
+## 产生一个参与者
 
-How to start an actor depends on its context. Spawning a new async actor
-is achieved via the `start` and `create` methods of
-the [Actor](../actix/trait.Actor.html) trait. It provides several different ways of
-creating actors; for details check the docs.
+如何启动一个参与者取决于它的上下文。可通过
+[Actor](../actix/trait.Actor.html) trait 的
+`start` 与 `create` 实现产生一个新的异步参与者。Actor trait 提供了几种不同的<!--
+-->创建参与者的方式；更详细信息请查看其文档。
 
-## Complete example
+## 完整示例
 
 ```rust
 # extern crate actix;
@@ -100,7 +100,7 @@ use std::io;
 use actix::prelude::*;
 use futures::Future;
 
-/// Define message
+/// 定义消息
 struct Ping;
 
 impl Message for Ping {
@@ -108,10 +108,10 @@ impl Message for Ping {
 }
 
 
-// Define actor
+// 定义参与者
 struct MyActor;
 
-// Provide Actor implementation for our actor
+// 为我们的参与者提供 Actor 实现
 impl Actor for MyActor {
     type Context = Context<Self>;
 
@@ -124,7 +124,7 @@ impl Actor for MyActor {
     }
 }
 
-/// Define handler for `Ping` message
+/// 为 `Ping` 消息定义处理程序
 impl Handler<Ping> for MyActor {
     type Result = Result<bool, io::Error>;
 
@@ -138,14 +138,14 @@ impl Handler<Ping> for MyActor {
 fn main() {
     let sys = System::new("example");
 
-    // Start MyActor in current thread
+    // 在当前线程启动 MyActor
     let addr = MyActor.start();
 
-    // Send Ping message.
-    // send() message returns Future object, that resolves to message result
+    // 发送 Ping 消息。
+    // send() 消息返回 Future 对象，可解析出消息结果
     let result = addr.send(Ping);
 
-    // spawn future to reactor
+    // 产生 future 给响应器
     Arbiter::spawn(
         result.map(|res| {
             match res {
@@ -162,9 +162,9 @@ fn main() {
 }
 ```
 
-## Responding with a MessageResponse
+## 以 MessageResponse 进行响应
 
-Let's take a look at the `Result` type defined for the `impl Handler` in the above example. See how we're returning a `Result<bool, io::Error>`? We're able to respond to our actor's incoming message with this type because it has the `MessageResponse` trait implemented for that type. Here's the definition for that trait:
+我们来看看上例中为 `impl Handler` 定义的 `Result` 类型。看下我们是如何返回一个 `Result<bool, io::Error>` 的？我们能够以这种类型响应该参与者的接入消息，是因为它已经为该类型实现了 `MessageResponse` trait。这是该 trait 的定义：
 
 ```
 pub trait MessageResponse<A: Actor, M: Message> {
@@ -172,7 +172,7 @@ pub trait MessageResponse<A: Actor, M: Message> {
 }
 ```
 
-Sometimes it makes sense to respond to incoming messages with types that don't have this trait implemented for them. When that happens we can implement the trait ourselves. Here's an example where we're responding to a `Ping` message with a `GotPing`, and responding with `GotPong` for a `Pong` message.
+有时会需要以没有为其实现这个 trait 的类型来响应接入的消息。当出现这种情况时，我们可以自己实现该 trait。以下是一个示例，其中我们以 `GotPing` 响应 `Ping` 消息，并且以 `GotPong` 响应 `Pong` 消息。
 
 ```rust
 # extern crate actix;
@@ -207,10 +207,10 @@ impl Message for Messages {
     type Result = Responses;
 }
 
-// Define actor
+// 定义参与者
 struct MyActor;
 
-// Provide Actor implementation for our actor
+// 为我们的参与者提供 Actor 实现
 impl Actor for MyActor {
     type Context = Context<Self>;
 
@@ -223,7 +223,7 @@ impl Actor for MyActor {
     }
 }
 
-/// Define handler for `Messages` enum
+/// 为 `Messages` 枚举定义处理程序
 impl Handler<Messages> for MyActor {
     type Result = Responses;
 
@@ -238,15 +238,15 @@ impl Handler<Messages> for MyActor {
 fn main() {
     let sys = System::new("example");
 
-    // Start MyActor in current thread
+    // 在当前线程启动 MyActor
     let addr = MyActor.start();
 
-    // Send Ping message.
-    // send() message returns Future object, that resolves to message result
+    // 发送 Ping 消息。
+    // send() 消息返回 Future 对象，可解析出消息结果
     let ping_future = addr.send(Messages::Ping);
     let pong_future = addr.send(Messages::Pong);
 
-    // Spawn pong_future onto event loop
+    // 将 pong_future 产生到事件循环上
     Arbiter::spawn(
         pong_future
             .map(|res| {
@@ -261,7 +261,7 @@ fn main() {
             }),
     );
 
-    // Spawn ping_future onto event loop
+    // 将 ping_future 产生到事件循环上
     Arbiter::spawn(
         ping_future
             .map(|res| {
