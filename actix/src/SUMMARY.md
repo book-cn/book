@@ -11,4 +11,4 @@
 - [IO 助手](./sec-8-io-helpers.md)
 - [Supervisor](./sec-9-supervisor.md)
 - [Registry](./sec-10-registry.md)
-- [助手 actor](./sec-11-helper-actors.md)
+- [助手参与者](./sec-11-helper-actors.md)
