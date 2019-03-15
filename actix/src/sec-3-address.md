@@ -7,7 +7,8 @@
 -->两个辅助方法来启动参与者。这两个方法都会返回所启动参与者的地址。
 
 以下是一个 `Actor::start()` 方法用法的示例。在这个示例中 `MyActor` 参与者是<!--
--->异步的，并且在与调用者相同的线程中启动。
+-->异步的，并且在与调用者相同的线程中启动 - threads are covered in
+the [SyncArbiter](./sec-6-sync-arbiter.md) chapter。
 
 ```rust
 # extern crate actix;
@@ -23,7 +24,7 @@ let addr = MyActor.start();
 # }
 ```
 
-异步参与者可以由 `Context` 对象获取其地址。该上下文需要实现
+异步参与者可以由 `Context` 结构获取其地址。该上下文需要实现
 `AsyncContext` trait。`AsyncContext::address()` 提供了参与者的地址。
 
 ```rust
@@ -40,14 +41,6 @@ impl Actor for MyActor {
 # fn main() {}
 ```
 
-## 信箱
-
-所有消息都会首先到达参与者的信箱，然后该参与者执行上下文<!--
--->会调用指定的消息处理程序。信箱通常是有限的。其容量<!--
--->由上下文实现指定。对于 `Context` 类型，
-默认容量设置为 16 条消息，可以通过
-[*Context::set_mailbox_capacity()*](../actix/struct.Context.html#method.set_mailbox_capacity) 扩容。
-
 ## 消息
 
 为了能够处理指定消息，参与者必须提供<!--
@@ -60,9 +53,10 @@ stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
 如需向参与者发送消息，需要使用 `Addr` 对象。`Addr` 提供了几种<!--
 -->发送消息的方式。
 
-  * `Addr::do_send(M)`——这个方法会忽略参与者的信箱容量，并且<!--
-  -->无条件将该消息放入信箱。这个方法不会返回<!--
-  -->消息处理的结果，并且如果参与者消失就会静默失败。
+  * `Addr::do_send(M)` - this method ignores any errors in message sending. If the mailbox
+  is full the message is still queued, bypassing the limit. If the actor's mailbox is closed,
+  the message is silently dropped. This method does not return the result, so if the
+  mailbox is closed and a failure occurs, you won't have an indication of this.
 
   * `Addr::try_send(M)`——这个方法会立即尝试发送该消息。如果<!--
   -->信箱已满或者关闭（参与者已死），那么这个方法返回
@@ -83,6 +77,9 @@ stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
 -->是实现了 `Handler<Signal>` trait 的任何参与者。
 
 ```rust
+# // This example is incomplete, so I don't think people can follow it and get value from what it's
+# // trying to communicate or teach.
+
 # #[macro_use] extern crate actix;
 # use actix::prelude::*;
 #[derive(Message)]
