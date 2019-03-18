@@ -7,8 +7,8 @@
 -->两个辅助方法来启动参与者。这两个方法都会返回所启动参与者的地址。
 
 以下是一个 `Actor::start()` 方法用法的示例。在这个示例中 `MyActor` 参与者是<!--
--->异步的，并且在与调用者相同的线程中启动 - threads are covered in
-the [SyncArbiter](./sec-6-sync-arbiter.md) chapter。
+-->异步的，并且在与调用者相同的线程中启动——线程会在
+[SyncArbiter](./sec-6-sync-arbiter.md) 章节中介绍。
 
 ```rust
 # extern crate actix;
@@ -53,10 +53,10 @@ stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
 如需向参与者发送消息，需要使用 `Addr` 对象。`Addr` 提供了几种<!--
 -->发送消息的方式。
 
-  * `Addr::do_send(M)` - this method ignores any errors in message sending. If the mailbox
-  is full the message is still queued, bypassing the limit. If the actor's mailbox is closed,
-  the message is silently dropped. This method does not return the result, so if the
-  mailbox is closed and a failure occurs, you won't have an indication of this.
+  * `Addr::do_send(M)`——这个方法会忽略消息发送中的任何错误。如果信箱<!--
+  -->已满，那么仍会绕过限制将该消息排入队列。如果该参与者的信箱已关闭，
+  那么会以静默方式丢弃该消息。这个方法不会返回结果，因此<!--
+  -->信箱关闭及发生故障都无从知悉。
 
   * `Addr::try_send(M)`——这个方法会立即尝试发送该消息。如果<!--
   -->信箱已满或者关闭（参与者已死），那么这个方法返回
@@ -77,8 +77,8 @@ stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
 -->是实现了 `Handler<Signal>` trait 的任何参与者。
 
 ```rust
-# // This example is incomplete, so I don't think people can follow it and get value from what it's
-# // trying to communicate or teach.
+# // 这个示例并不完整，因此我认为并不能效仿它并从其
+# // 试图传达或教导的内容中获得价值。
 
 # #[macro_use] extern crate actix;
 # use actix::prelude::*;
