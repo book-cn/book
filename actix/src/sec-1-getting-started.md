@@ -20,7 +20,7 @@ cd actor-ping
 
 ```toml
 [dependencies]
-actix = "0.7"
+actix = "0.8"
 ```
 
 我们来创建一个接受 `Ping` 消息并以 ping 处理后的数字作为响应的参与者。
@@ -88,7 +88,7 @@ impl Message for Ping {
 impl Handler<Ping> for MyActor {
     type Result = usize;
 
-    fn handle(&mut self, msg: Ping, ctx: &mut Context<Self>) -> Self::Result {
+    fn handle(&mut self, msg: Ping, _ctx: &mut Context<Self>) -> Self::Result {
         self.count += msg.0;
 
         self.count
@@ -115,6 +115,7 @@ impl Handler<Ping> for MyActor {
 # extern crate actix;
 # extern crate futures;
 # use futures::Future;
+# use std::io;
 # use actix::prelude::*;
 # struct MyActor {
 #    count: usize,
@@ -137,7 +138,7 @@ impl Handler<Ping> for MyActor {
 #     }
 # }
 #
-fn main() {
+fn main() -> io::Result<()> {
     let system = System::new("test");
 
     // 启动新的参与者
@@ -153,7 +154,7 @@ fn main() {
         })
         .map_err(|_| ()));
 
-    system.run();
+    system.run()
 }
 ```
 
