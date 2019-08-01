@@ -138,7 +138,7 @@ impl Handler<Ping> for MyActor {
 #     }
 # }
 #
-fn main() -> io::Result<()> {
+fn main() -> std::io::Result<()> {
     let system = System::new("test");
 
     // 启动新的参与者
