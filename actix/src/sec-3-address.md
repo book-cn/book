@@ -83,10 +83,12 @@ stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
 # #[macro_use] extern crate actix;
 # use actix::prelude::*;
 #[derive(Message)]
+#[rtype(result = "()")]
 struct Signal(usize);
 
 /// 订阅处理信号。
 #[derive(Message)]
+#[rtype(result = "()")]
 struct Subscribe(pub Recipient<Signal>);
 
 /// 提供信号订阅的参与者

@@ -7,7 +7,7 @@ Actix 建立在[参与者模型（Actor model）](https://zh.wikipedia.org/wiki/
 “参与者”，这些参与者通过消息进行通信。参与者是封装<!--
 -->状态与行为并且会在由 actix 库提供的 *Actor System* 中运行的对象。
 
-参与者在指定的上下文 [*Context<A>*](../actix/struct.Context.html) 中运行。
+参与者在指定的上下文 [*Context<A>*](./sec-4-context.html) 中运行。
 该上下文对象只在执行期间可用。每个参与者都有一个独立的<!--
 -->执行上下文。该执行上下文还控制参与者的生命周期。
 
