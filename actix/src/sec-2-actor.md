@@ -2,12 +2,12 @@
 
 Actix 是一个 rust 库，为开发并发应用程序提供了框架。
 
-Actix 建立在[参与者模型（Actor model）](https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F)之上，它<!--
+Actix 建立在[参与者模型（Actor model）]之上，它<!--
 -->使应用程序可以编写为一组独立执行而又相互协作的
 “参与者”，这些参与者通过消息进行通信。参与者是封装<!--
 -->状态与行为并且会在由 actix 库提供的 *Actor System* 中运行的对象。
 
-参与者在指定的上下文 [*Context<A>*](./sec-4-context.html) 中运行。
+参与者在指定的上下文 [`Context<A>`] 中运行。
 该上下文对象只在执行期间可用。每个参与者都有一个独立的<!--
 -->执行上下文。该执行上下文还控制参与者的生命周期。
 
@@ -15,14 +15,18 @@ Actix 建立在[参与者模型（Actor model）](https://zh.wikipedia.org/wiki/
 -->选择等待该响应。不能直接引用参与者，而要通过<!--
 -->地址来引用。
 
-任何 rust 类型都可以是一个参与者，只需实现 [*Actor*](../actix/trait.Actor.html) trait 即可。
+任何 rust 类型都可以是一个参与者，只需实现 [`Actor`] trait 即可。
 
 为了能够处理指定消息，参与者必须提供<!--
--->这种消息的 [*Handler<M>*](../actix/trait.Handler.html) 实现。所有消息<!--
+-->这种消息的 [`Handler<M>`] 实现。所有消息<!--
 -->都是静态类型的。可以使用异步方式处理消息。
 参与者可以产生其他参与者或者将 future 或 stream 添加到执行上下文。
 `Actor` trait 提供了几种可以控制参与者生命周期的方法。
 
+[参与者模型（Actor model）]: https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F
+[`Context<A>`]: ./sec-4-context.html
+[`Actor`]: https://book-cn.github.io/actix/actix/trait.Actor.html
+[`Handler<M>`]: https://book-cn.github.io/actix/actix/trait.Handler.html
 
 ## 参与者生命周期
 
@@ -66,7 +70,7 @@ Actix 建立在[参与者模型（Actor model）](https://zh.wikipedia.org/wiki/
 
 一个 Actor 通过发送消息与其他参与者通信。在 actix 中的所有<!--
 -->消息都是类型化的。消息可以是任何实现了
-[Message](../actix/trait.Message.html) trait 的 rust 类型。*Message::Result* 定义了其返回值类型。
+[`Message`] trait 的 rust 类型。`Message::Result` 定义了其返回值类型。
 让我们来定义一个简单的 `Ping` 消息——接受这种消息的参与者需要返回
 `io::Result<bool>`。
 
@@ -84,10 +88,12 @@ impl Message for Ping {
 # fn main() {}
 ```
 
+[`Message`]: https://book-cn.github.io/actix/actix/trait.Message.html
+
 ## 产生一个参与者
 
 如何启动一个参与者取决于它的上下文。可通过
-[Actor](../actix/trait.Actor.html) trait 的
+[`Actor`] trait 的
 `start` 与 `create` 实现产生一个新的异步参与者。Actor trait 提供了几种不同的<!--
 -->创建参与者的方式；更详细信息请查看其文档。
 

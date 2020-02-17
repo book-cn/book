@@ -8,7 +8,7 @@
 
 以下是一个 `Actor::start()` 方法用法的示例。在这个示例中 `MyActor` 参与者是<!--
 -->异步的，并且在与调用者相同的线程中启动——线程会在
-[SyncArbiter](./sec-6-sync-arbiter.md) 章节中介绍。
+[SyncArbiter] 章节中介绍。
 
 ```rust
 # extern crate actix;
@@ -41,10 +41,12 @@ impl Actor for MyActor {
 # fn main() {}
 ```
 
+[SyncArbiter]: ./sec-6-sync-arbiter.md
+
 ## 消息
 
 为了能够处理指定消息，参与者必须提供<!--
--->这种消息的 [`Handler<M>`](../actix/trait.Handler.html) 实现。
+-->这种消息的 [`Handler<M>`] 实现。
 所有消息都是静态类型的。可以使用异步方式处理消息<!--
 -->。参与者可以产生其他参与者或者将 future 或
 stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
@@ -60,11 +62,14 @@ stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
 
   * `Addr::try_send(M)`——这个方法会立即尝试发送该消息。如果<!--
   -->信箱已满或者关闭（参与者已死），那么这个方法返回
-  [`SendError`](../actix/prelude/enum.SendError.html)。
+  [`SendError`]。
 
   * `Addr::send(M)`——这个消息返回一个可解析出消息处理过程的<!--
   -->结果的 future 对象。如果返回的 `Future` 对象被 drop，那么<!--
   -->会取消该消息。
+
+[`Handler<M>`]: https://book-cn.github.io/actix/actix/trait.Handler.html
+[`SendError`]: https://book-cn.github.io/actix/actix/prelude/enum.SendError.html
 
 ## 收信方
 

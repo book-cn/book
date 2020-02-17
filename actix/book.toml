@@ -5,3 +5,8 @@ author = "Actix 项目及贡献者（著）& 灰蓝天际（译）"
 
 [output.html]
 google-analytics = "UA-123031709-1"
+git-repository-url = "https://github.com/hltj/actix-book-cn"
+
+[output.linkcheck]
+follow-web-links = true
+warning-policy = "error"

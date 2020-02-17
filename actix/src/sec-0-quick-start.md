@@ -5,10 +5,10 @@
 
 ## 安装 Rust
 
-在开始之前，我们需要使用 [rustup](https://www.rustup.rs/) 安装程序来安装 Rust：
+在开始之前，我们需要使用 [rustup](https://rustup.rs/) 安装程序来安装 Rust：
 
 ```bash
-curl https://sh.rustup.rs -sSf | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 如果已经安装过 rustup，请运行这个命令来确保拥有最新版本的 Rust：
@@ -17,7 +17,7 @@ curl https://sh.rustup.rs -sSf | sh
 rustup update
 ```
 
-actix 框架需要 Rust 1.21 及更高版本。
+actix 框架需要 Rust 1.39.0 及更高版本。
 
 ## 运行示例
 
