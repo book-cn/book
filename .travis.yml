@@ -24,6 +24,6 @@ after_success:
       curl -sL https://github.com/rust-lang-nursery/mdBook/releases/download/v0.1.5/mdbook-v0.1.5-x86_64-unknown-linux-gnu.tar.gz | tar xvz -C $HOME/.cargo/bin &&
       cd actix && mdbook build -d ../target/doc/actix && cd .. &&
       git clone https://github.com/davisp/ghp-import.git &&
-      ./ghp-import/ghp_import.py -n -p -f -m "内容更新" -r https://"$GH_TOKEN"@github.com/book-cn/actix.git target/doc/actix &&
+      ./ghp-import/ghp_import.py -n -p -f -m "内容更新" -r https://"$GH_TOKEN"@github.com/book-cn/actix.git target/doc/actix/html &&
       echo "内容已更新"
     fi
