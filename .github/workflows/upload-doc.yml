@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository == 'actix/book'
+    if: github.repository == 'hltj/actix-book-cn'
 
     steps:
       - uses: actions/checkout@master
@@ -27,4 +27,4 @@ jobs:
           cp -r ./target/doc/actix/html/* ./target/doc/actix/
           rm -r ./target/doc/actix/html ./target/doc/actix/linkcheck
           git clone https://github.com/davisp/ghp-import.git
-          ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -r https://${{ secrets.GITHUB_TOKEN }}@github.com/"${{ github.repository }}.git" target/doc
+          ./ghp-import/ghp_import.py -n -p -f -m "内容更新" -r https://${{ secrets.GH_TOKEN }}@github.com/book-cn/actix.git" target/doc
