@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository == 'hltj/actix-book-cn'
+    if: github.repository == '!hltj/actix-book-cn'
 
     steps:
       - uses: actions/checkout@master
