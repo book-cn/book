@@ -25,8 +25,8 @@ Actix 建立在[参与者模型（Actor model）]之上，它<!--
 
 [参与者模型（Actor model）]: https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F
 [`Context<A>`]: ./sec-4-context.html
-[`Actor`]: https://book-cn.github.io/actix/actix/trait.Actor.html
-[`Handler<M>`]: https://book-cn.github.io/actix/actix/trait.Handler.html
+[`Actor`]: https://actix.rs/actix/actix/trait.Actor.html
+[`Handler<M>`]: https://actix.rs/actix/actix/trait.Handler.html
 
 ## 参与者生命周期
 
@@ -88,7 +88,7 @@ impl Message for Ping {
 # fn main() {}
 ```
 
-[`Message`]: https://book-cn.github.io/actix/actix/trait.Message.html
+[`Message`]: https://actix.rs/actix/actix/trait.Message.html
 
 ## 产生一个参与者
 

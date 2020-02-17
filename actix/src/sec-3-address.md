@@ -68,8 +68,8 @@ stream 添加到执行上下文。参与者 trait 提供了几种可以<!--
   -->结果的 future 对象。如果返回的 `Future` 对象被 drop，那么<!--
   -->会取消该消息。
 
-[`Handler<M>`]: https://book-cn.github.io/actix/actix/trait.Handler.html
-[`SendError`]: https://book-cn.github.io/actix/actix/prelude/enum.SendError.html
+[`Handler<M>`]: https://actix.rs/actix/actix/trait.Handler.html
+[`SendError`]: https://actix.rs/actix/actix/prelude/enum.SendError.html
 
 ## 收信方
 
