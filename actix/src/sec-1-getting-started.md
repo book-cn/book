@@ -11,7 +11,7 @@
 Cargo 项目并切换到新目录中：
 
 ```bash
-cargo new actor-ping --bin
+cargo new actor-ping
 cd actor-ping
 ```
 
@@ -20,7 +20,8 @@ cd actor-ping
 
 ```toml
 [dependencies]
-actix = "0.8"
+actix = "0.10.0-alpha.3"
+actix-rt = "1.1" # <-- Runtime for actix
 ```
 
 我们来创建一个接受 `Ping` 消息并以 ping 处理后的数字作为响应的参与者。
@@ -38,7 +39,7 @@ struct MyActor {
 impl Actor for MyActor {
     type Context = Context<Self>;
 }
-
+#
 # fn main() {}
 ```
 
@@ -52,12 +53,10 @@ impl Actor for MyActor {
 # extern crate actix;
 use actix::prelude::*;
 
+#[derive(Message)]
+#[rtype(result = "usize")]
 struct Ping(usize);
-
-impl Message for Ping {
-    type Result = usize;
-}
-
+#
 # fn main() {}
 ```
 
@@ -84,7 +83,7 @@ impl Message for Ping {
 # impl Message for Ping {
 #    type Result = usize;
 # }
-
+#
 impl Handler<Ping> for MyActor {
     type Result = usize;
 
@@ -94,7 +93,7 @@ impl Handler<Ping> for MyActor {
         self.count
     }
 }
-
+#
 # fn main() {}
 ```
 
@@ -111,11 +110,12 @@ impl Handler<Ping> for MyActor {
 
 在以下示例中，我们会创建一个 `MyActor` 参与者并发送一条消息。
 
+Here we use the actix-rt as way to start our System and drive our main Future
+so we can easily `.await` for the messages sent to the Actor.
+
 ```rust
 # extern crate actix;
-# extern crate futures;
-# use futures::Future;
-# use std::io;
+# extern crate actix_rt;
 # use actix::prelude::*;
 # struct MyActor {
 #    count: usize,
@@ -138,24 +138,22 @@ impl Handler<Ping> for MyActor {
 #     }
 # }
 #
-fn main() -> std::io::Result<()> {
-    let system = System::new("test");
-
+#[actix_rt::main] 
+async fn main() {
     // 启动新的参与者
-    let addr = MyActor{count: 10}.start();
+    let addr = MyActor { count: 10 }.start();
 
     // 发送消息并获取结果 future
-    let res = addr.send(Ping(10));
+    let res = addr.send(Ping(10)).await;
 
-    Arbiter::spawn(
-        res.map(|res| {
-            # System::current().stop();
-            println!("RESULT: {}", res == 20);
-        })
-        .map_err(|_| ()));
+    // handle() returns tokio handle
+    println!("RESULT: {}", res.unwrap() == 20);
 
-    system.run()
+    // stop system and exit
+    System::current().stop();
 }
 ```
+
+`#[actix_rt::main]` starts the system and block until future resolves.
 
 Ping 示例可在[示例目录](https://github.com/actix/actix/tree/master/examples/)中找到。

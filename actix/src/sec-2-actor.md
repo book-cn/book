@@ -72,19 +72,18 @@ Actix 建立在[参与者模型（Actor model）]之上，它<!--
 -->消息都是类型化的。消息可以是任何实现了
 [`Message`] trait 的 rust 类型。`Message::Result` 定义了其返回值类型。
 让我们来定义一个简单的 `Ping` 消息——接受这种消息的参与者需要返回
-`io::Result<bool>`。
+`Result<bool, std::io::Error>`。
 
 ```rust
 # extern crate actix;
-use std::io;
 use actix::prelude::*;
 
 struct Ping;
 
 impl Message for Ping {
-    type Result = Result<bool, io::Error>;
+    type Result = Result<bool, std::io::Error>;
 }
-
+#
 # fn main() {}
 ```
 
@@ -101,18 +100,13 @@ impl Message for Ping {
 
 ```rust
 # extern crate actix;
-# extern crate futures;
-use std::io;
+# extern crate actix_rt;
 use actix::prelude::*;
-use futures::Future;
 
 /// 定义消息
+#[derive(Message)]
+#[rtype(result = "Result<bool, std::io::Error>")]
 struct Ping;
-
-impl Message for Ping {
-    type Result = Result<bool, io::Error>;
-}
-
 
 // 定义参与者
 struct MyActor;
@@ -132,7 +126,7 @@ impl Actor for MyActor {
 
 /// 为 `Ping` 消息定义处理程序
 impl Handler<Ping> for MyActor {
-    type Result = Result<bool, io::Error>;
+    type Result = Result<bool, std::io::Error>;
 
     fn handle(&mut self, msg: Ping, ctx: &mut Context<Self>) -> Self::Result {
         println!("Ping received");
@@ -141,52 +135,48 @@ impl Handler<Ping> for MyActor {
     }
 }
 
-fn main() {
-    let sys = System::new("example");
-
+#[actix_rt::main]
+async fn main() {
     // 在当前线程启动 MyActor
     let addr = MyActor.start();
 
     // 发送 Ping 消息。
     // send() 消息返回 Future 对象，可解析出消息结果
-    let result = addr.send(Ping);
+    let result = addr.send(Ping).await;
 
-    // 产生 future 给响应器
-    Arbiter::spawn(
-        result.map(|res| {
-            match res {
-                Ok(result) => println!("Got result: {}", result),
-                Err(err) => println!("Got error: {}", err),
-            }
-#           System::current().stop();
-        })
-        .map_err(|e| {
-            println!("Actor is probably dead: {}", e);
-        }));
-
-    sys.run();
+    match result {
+        Ok(res) => println!("Got result: {}", res.unwrap()),
+        Err(err) => println!("Got error: {}", err),
+    } 
 }
 ```
 
 ## 以 MessageResponse 进行响应
 
-我们来看看上例中为 `impl Handler` 定义的 `Result` 类型。看下我们是如何返回一个 `Result<bool, io::Error>` 的？我们能够以这种类型响应该参与者的接入消息，是因为它已经为该类型实现了 `MessageResponse` trait。这是该 trait 的定义：
+我们来看看上例中为 `impl Handler` 定义的 `Result` 类型。
+看下我们是如何返回一个 `Result<bool, std::io::Error>` 的？我们能够以这种类型响应该参与者的<!--
+-->接入消息，是因为它已经为该类型实现了 `MessageResponse` trait。
+这是该 trait 的定义：
 
-```
+```rust,ignore
 pub trait MessageResponse<A: Actor, M: Message> {
     fn handle<R: ResponseChannel<M>>(self, ctx: &mut A::Context, tx: Option<R>);
 }
 ```
 
-有时会需要以没有为其实现这个 trait 的类型来响应接入的消息。当出现这种情况时，我们可以自己实现该 trait。以下是一个示例，其中我们以 `GotPing` 响应 `Ping` 消息，并且以 `GotPong` 响应 `Pong` 消息。
+有时会需要以没有为其实现这个 trait
+的类型来响应接入的消息。当出现这种情况时，我们可以自己实现该 trait。
+以下是一个示例，其中我们以 `GotPing` 响应 `Ping` 消息、
+以 `GotPong` 响应 `Pong` 消息。
 
 ```rust
 # extern crate actix;
-# extern crate futures;
+# extern crate actix_rt;
 use actix::dev::{MessageResponse, ResponseChannel};
 use actix::prelude::*;
-use futures::Future;
 
+#[derive(Message)]
+#[rtype(result = "Responses")]
 enum Messages {
     Ping,
     Pong,
@@ -209,10 +199,6 @@ where
     }
 }
 
-impl Message for Messages {
-    type Result = Responses;
-}
-
 // 定义参与者
 struct MyActor;
 
@@ -220,11 +206,11 @@ struct MyActor;
 impl Actor for MyActor {
     type Context = Context<Self>;
 
-    fn started(&mut self, ctx: &mut Context<Self>) {
+    fn started(&mut self, _ctx: &mut Context<Self>) {
         println!("Actor is alive");
     }
 
-    fn stopped(&mut self, ctx: &mut Context<Self>) {
+    fn stopped(&mut self, _ctx: &mut Context<Self>) {
         println!("Actor is stopped");
     }
 }
@@ -233,7 +219,7 @@ impl Actor for MyActor {
 impl Handler<Messages> for MyActor {
     type Result = Responses;
 
-    fn handle(&mut self, msg: Messages, ctx: &mut Context<Self>) -> Self::Result {
+    fn handle(&mut self, msg: Messages, _ctx: &mut Context<Self>) -> Self::Result {
         match msg {
             Messages::Ping => Responses::GotPing,
             Messages::Pong => Responses::GotPong,
@@ -241,47 +227,30 @@ impl Handler<Messages> for MyActor {
     }
 }
 
-fn main() {
-    let sys = System::new("example");
-
+#[actix_rt::main]
+async fn main() {
     // 在当前线程启动 MyActor
     let addr = MyActor.start();
 
     // 发送 Ping 消息。
     // send() 消息返回 Future 对象，可解析出消息结果
-    let ping_future = addr.send(Messages::Ping);
-    let pong_future = addr.send(Messages::Pong);
+    let ping_future = addr.send(Messages::Ping).await;
+    let pong_future = addr.send(Messages::Pong).await;
 
-    // 将 pong_future 产生到事件循环上
-    Arbiter::spawn(
-        pong_future
-            .map(|res| {
-                match res {
-                    Responses::GotPing => println!("Ping received"),
-                    Responses::GotPong => println!("Pong received"),
-                }
-#               System::current().stop();
-            })
-            .map_err(|e| {
-                println!("Actor is probably dead: {}", e);
-            }),
-    );
+    match pong_future {
+        Ok(res) => match res {
+            Responses::GotPing => println!("Ping received"),
+            Responses::GotPong => println!("Pong received"),
+        },
+        Err(e) => println!("Actor is probably dead: {}", e),
+    }
 
-    // 将 ping_future 产生到事件循环上
-    Arbiter::spawn(
-        ping_future
-            .map(|res| {
-                match res {
-                    Responses::GotPing => println!("Ping received"),
-                    Responses::GotPong => println!("Pong received"),
-                }
-#               System::current().stop();
-            })
-            .map_err(|e| {
-                println!("Actor is probably dead: {}", e);
-            }),
-    );
-
-    sys.run();
+    match ping_future {
+        Ok(res) => match res {
+            Responses::GotPing => println!("Ping received"),
+            Responses::GotPong => println!("Pong received"),
+        },
+        Err(e) => println!("Actor is probably dead: {}", e),
+    }
 }
 ```

@@ -17,7 +17,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustup update
 ```
 
-actix 框架需要 Rust 1.39.0 及更高版本。
+actix 框架需要 Rust 1.40.0 及更高版本。
 
 ## 运行示例
 
