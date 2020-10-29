@@ -27,6 +27,7 @@ actix 框架需要 Rust 1.40.0 及更高版本。
 
 ```bash
 git clone https://github.com/actix/actix
+cd actix
 cargo run --example ping
 ```
 
