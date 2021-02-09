@@ -21,8 +21,8 @@ after_success:
   - export PATH=$PATH:~/.cargo/bin
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "master" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-      cargo install mdbook --no-default-features --version 0.4.2 &&
-      cargo install mdbook-linkcheck --version 0.7.0 &&
+      cargo install mdbook --no-default-features --version 0.4.5 &&
+      cargo install mdbook-linkcheck --version 0.7.2 &&
       cd actix && mdbook build -d ../target/doc/actix && cd .. &&
       git clone https://github.com/davisp/ghp-import.git &&
       ./ghp-import/ghp_import.py -n -p -f -m "内容更新" -r https://"$GH_TOKEN"@github.com/book-cn/actix.git target/doc/actix/html &&
